@@ -1,5 +1,5 @@
 /*
- * animaly_detection_util.cpp
+ * SimpleAnomalyDetector.cpp
  *
  * Author: 337904619 Margarita Kilinkarov 201283033 Gitit Shapira
  */
@@ -52,7 +52,7 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
 			c.feature2 = maxCorFeature;
 			c.corrlation = maxPearson;
 			c.lin_reg = line;
-			c.threshold = maxDev * 1.2;
+			c.threshold = maxDev * 1.1;
 			cf.push_back(c);
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * animaly_detection_util.cpp
+ * anomaly_detection_util.h
  *
  * Author: 337904619 Margarita Kilinkarov 201283033 Gitit Shapira
  */

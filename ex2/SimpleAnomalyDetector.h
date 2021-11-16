@@ -1,5 +1,5 @@
 /*
- * animaly_detection_util.cpp
+ * SimpleAnomalyDetector.h
  *
  * Author: 337904619 Margarita Kilinkarov 201283033 Gitit Shapira
  */
