@@ -1,3 +1,8 @@
+/*
+ * minCircle.cpp
+ *
+ * Author: 337904619 Margarita Kilinkarov 201283033 Gitit Shapira
+ */
 #include "minCircle.h"
 #include <iostream>
 #include <vector>

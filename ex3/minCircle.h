@@ -1,3 +1,8 @@
+/*
+ * minCircle.h
+ *
+ * Author: 337904619 Margarita Kilinkarov 201283033 Gitit Shapira
+ */
 
 #ifndef MINCIRCLE_H_
 #define MINCIRCLE_H_
