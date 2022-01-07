@@ -128,6 +128,13 @@ class Results:public Command{
 public:
 	Results(DefaultIO* dio): Command(dio){}
 	void execute(Helper* info) {
+		map<int, int> anomalyMap;
+        vector<pair<long, long>> unifedReports;
+        string start, end;
+        string input;
+        TimeSeries test = TimeSeries("test.csv");
+        float n = test.numOfFlights();
+        float truePositive = 0, falsePositive = 0;
 		dio->write("Please upload your local anomalies file.\n");
 		vector<Report> user_reports;
 		
@@ -138,15 +145,60 @@ public:
 			int start = stoi(line.substr(0, line.find(delim)));
 			int end = stoi(line.substr(line.find(delim) + 1, line.size()));
 			Report report = {start, end, ""};
+			anomalyMap.insert({start, end});
 			user_reports.push_back(report);
 			line = dio->read();
 		}
 		
 		dio->write("Upload complete.\n");
-		dio->write("True Positive Rate: ");
-		dio->write("\n");
-		dio->write("False Positive Rate: ");
-		dio->write("\n");
+		float positive = anomalyMap.size();
+        for (pair<int, int> anomaly : anomalyMap) {
+            n -= (float) (anomaly.second - anomaly.first + 1);
+        }
+        int anomalyReportMaxIndex = info->report.size() - 1;
+        for (int i = 0; i < anomalyReportMaxIndex; i++) {
+            long firstTimeStep = info->report.at(i).timeStep;
+            long lastTimeStep = info->report.at(i).timeStep;
+            while (i < anomalyReportMaxIndex &&
+                   info->report.at(i).timeStep + 1 == info->report.at(i + 1).timeStep &&
+                   info->report.at(i).description == info->report.at(i + 1).description) {
+                lastTimeStep = info->report.at(++i).timeStep;
+            }
+            unifedReports.emplace_back(firstTimeStep, lastTimeStep);
+        }
+        for (pair<int, int> anomaly : anomalyMap) {
+            for (pair<long, long> report: unifedReports) {
+                if (report.second >= anomaly.first && anomaly.second >= report.first) {
+                    truePositive++;
+                    break;
+                }
+            }
+        }
+        for (pair<long, long> report: unifedReports) {
+            bool tpDetected = false;
+            for (pair<int, int> anomaly : anomalyMap) {
+                if (report.second >= anomaly.first && anomaly.second >= report.first) {
+                    tpDetected = true;
+                }
+            }
+            if (!tpDetected) {
+                falsePositive++;
+            }
+        }
+        if (positive == 0) {
+            dio->write("True Positive Rate: 0\n");
+        } else {
+            float positiveRate = truePositive / positive;
+            positiveRate = floorf(1000 * positiveRate) / 1000;
+            dio->write("True Positive Rate: ");
+            dio->write(positiveRate);
+            dio->write("\n");
+        }
+        float falseAlaramRate = falsePositive / n;
+        falseAlaramRate = floorf(1000 * falseAlaramRate) / 1000;
+        dio->write("False Positive Rate: ");
+        dio->write(falseAlaramRate);
+        dio->write("\n");
 	}
 };
 #endif /* COMMANDS_H_ */
